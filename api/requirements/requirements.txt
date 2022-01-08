@@ -1,0 +1,8 @@
+django
+djangorestframework
+drf-spectacular
+gunicorn
+django-filter
+django-cors-headers
+python-decouple
+psycopg2-binary
