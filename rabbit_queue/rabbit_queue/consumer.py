@@ -39,12 +39,11 @@ class Consumer:
             exchange=exchange,
             exchange_type=exchange_type
         )
-        self._channel.queue_declare(queue=queue)
+        self._channel.queue_declare(queue=queue, durable=True)
         self._channel.queue_bind(
             queue=queue,
             exchange=exchange,
-            routing_key=self._routing_key,
-            durable=True
+            routing_key=self._routing_key
         )
         self._channel.basic_qos(prefetch_count=1)
         self._channel.basic_consume(
