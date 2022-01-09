@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-requirements = ["python-decouple==3.4", "pika==1.2.0"]
+requirements = ["python-decouple==3.5", "pika==1.2.0"]
 
 setup(
     name="rabbit_queue",
