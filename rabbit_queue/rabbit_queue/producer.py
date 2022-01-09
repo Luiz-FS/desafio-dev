@@ -22,20 +22,23 @@ class Producer:
         broker_port=BROKER_PORT,
     ):
         self._exchange = exchange
-        parameters = pika.ConnectionParameters(
+        self._exchange_type = exchange_type
+        self._parameters = pika.ConnectionParameters(
             host=broker_host,
             port=broker_port,
             credentials=pika.PlainCredentials(broker_user, broker_pass),
             heartbeat=heartbeat,
         )
         self._properties = pika.BasicProperties(content_type="application/json", delivery_mode=2)
-        self._connection = pika.BlockingConnection(parameters)
+    
+    def open_connection(self):
+        self._connection = pika.BlockingConnection(self._parameters)
         self._channel = self._connection.channel()
         self._channel.exchange_declare(
-            exchange=exchange,
-            exchange_type=exchange_type
+            exchange=self._exchange,
+            exchange_type=self._exchange_type
         )
-    
+
     def publish(self, routing_key, message):
         self._channel.basic_publish(
             exchange=self._exchange,
@@ -43,3 +46,7 @@ class Producer:
             body=json.dumps(message),
             properties=self._properties
         )
+    
+    def close(self):
+        """Disconnect from RabbitMQ connection."""
+        self._connection.close()
