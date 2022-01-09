@@ -44,6 +44,7 @@ class Consumer:
             queue=queue,
             exchange=exchange,
             routing_key=self._routing_key,
+            durable=True
         )
         self._channel.basic_qos(prefetch_count=1)
         self._channel.basic_consume(
