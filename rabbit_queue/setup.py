@@ -6,7 +6,7 @@ setup(
     name="rabbit_queue",
     version="0.0.0",
     description="Service to facilitate and centralize libraries used to access RabbitMQ.",
-    author="Nuveo",
+    author="Luiz",
     url="https://github.com/luiz-fs/desafio-dev/tree/main/rabbit_queue",
     packages=find_packages(exclude=["tests"]),
     install_requires=requirements,
