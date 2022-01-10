@@ -1,0 +1,73 @@
+version: "3"
+services:
+  api:
+    build: ./api
+    depends_on:
+      - broker
+      - db
+    environment:
+      - DEBUG=True
+      - DB_URI=postgresql://postgres:postgres@db:5432/cnab
+      - PROCESS_AREA=/opt/process_area
+      - BROKER_HOST=broker
+      - BROKER_USER=guest
+      - BROKER_PASS=guest
+      - BROKER_PORT=5672
+    ports:
+      - "8000:8000"
+    volumes:
+      - process_area:/opt/process_area
+  
+  worker:
+    build: ./worker
+    depends_on:
+      - broker
+    environment:
+      - PROCESS_AREA=/opt/process_area
+      - BROKER_HOST=broker
+      - BROKER_USER=guest
+      - BROKER_PASS=guest
+      - BROKER_PORT=5672
+      - QUEUE=file_parser_queue
+      - ROUTING_KEY=file_parser
+    volumes:
+      - process_area:/opt/process_area
+    restart: on-failure
+  
+  events:
+    build: ./events
+    depends_on:
+      - db
+      - broker
+    environment:
+      - DB_URI=postgresql://postgres:postgres@db:5432/cnab
+      - BROKER_HOST=broker
+      - BROKER_USER=guest
+      - BROKER_PASS=guest
+      - BROKER_PORT=5672
+      - QUEUE=events_queue
+      - ROUTING_KEY=events
+    volumes:
+      - process_area:/opt/process_area
+    restart: on-failure
+    
+  db:
+    image: postgres:11-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=cnab
+
+  broker:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "8080:15672"
+    volumes:
+      - data:/var/lib/rabbitmq
+
+volumes:
+  process_area:
+  data:
