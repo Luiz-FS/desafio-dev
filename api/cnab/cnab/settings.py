@@ -17,11 +17,10 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROCESS_AREA = config("PROCESS_AREA", default="/opt/process_area", cast=str)
-BROKER = config("BROKER", default="broker", cast=str)
+BROKER_HOST = config("BROKER_HOST", default="localhost", cast=str)
 BROKER_USER = config("BROKER_USER", default="guest", cast=str)
 BROKER_PASS = config("BROKER_PASS", default="guest", cast=str)
 BROKER_PORT = config("BROKER_PORT", default=5672, cast=int)
-BROKER_SSL = config("BROKER_SSL", default=False, cast=bool)
 DB_URI = config(
     "DB_URI", default="postgresql://postgres:postgres@localhost/cnab", cast=str
 )
