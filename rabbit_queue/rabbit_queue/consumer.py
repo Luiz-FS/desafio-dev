@@ -2,6 +2,7 @@ import pika
 import json
 from functools import partial
 from decouple import config
+from rabbit_queue.exception import BrokerConnectionError
 
 
 BROKER_HOST = config("BROKER_HOST", default="localhost", cast=str)
@@ -33,7 +34,11 @@ class Consumer:
             heartbeat=heartbeat,
         )
 
-        connection = pika.BlockingConnection(parameters)
+        try:
+            connection = pika.BlockingConnection(parameters)
+        except pika.exceptions.AMQPConnectionError:
+            raise BrokerConnectionError()
+
         self._channel = connection.channel()
         self._channel.exchange_declare(
             exchange=exchange,
