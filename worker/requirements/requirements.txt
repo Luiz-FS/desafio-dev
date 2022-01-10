@@ -1,0 +1,3 @@
+python-decouple
+
+-e "git+http://git@github.com/luiz-fs/desafio-dev.git@main#egg=rabbit_queue&subdirectory=rabbit_queue"
