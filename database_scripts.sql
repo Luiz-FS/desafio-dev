@@ -42,7 +42,7 @@ EXCEPTION
 END;
 $BODY$ LANGUAGE plpgsql;
 
-CREATE EXISTS TRIGGER savestore
+CREATE TRIGGER savestore
     AFTER INSERT
     ON events
     FOR EACH ROW

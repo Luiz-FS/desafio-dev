@@ -266,11 +266,7 @@ Cargo.lock
 
 # End of https://www.gitignore.io/api/go,node,rust,python,angular
 .vscode/settings.json
-infra/nuveo-core_json.json
-preregistro-google-credential.json
 terraform.tfstate.d/
-bradesco.retry
-playbook.retry
 data
 .vscode
 process_area/
