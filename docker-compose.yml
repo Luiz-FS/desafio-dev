@@ -9,6 +9,8 @@ services:
       - api
     ports:
       - "8081:80"
+    restart: on-failure
+
   api:
     build: ./api
     depends_on:
@@ -26,6 +28,7 @@ services:
     #   - "8000:8000"
     volumes:
       - process_area:/opt/process_area
+    restart: on-failure
   
   worker:
     build: ./worker
