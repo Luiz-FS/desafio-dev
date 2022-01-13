@@ -13,7 +13,7 @@ O ```events``` receberá as mensagens com os dados e irá salvar-los na tabela e
 ## Iniciando o projeto
 
 ### Dependências necessárias
-Antes de executar o projeto é preciso certificar-se de ter algumas depências, elas são: ```Python3``` (e o pip caso não esteja instalado), o ```Docker``` e o ```Docker Compose```.
+Antes de executar o projeto é preciso certificar-se de ter algumas depências instaladas. Elas são: ```Python3``` (e o pip caso não esteja instalado), o ```Docker``` e o ```Docker Compose```.
 
 ### Criando tabelas no banco
 Após certificar-se de ter todas dependências instaladas, é preciso popular o banco de dados com as tabelas que serão utilizadas. Para isso, basta executar na raíz do projeto o comando:
