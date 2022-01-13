@@ -10,6 +10,9 @@ O ```worker``` receberá a mensagem e iniciará o processamento do arquivo. Prim
 
 O ```events``` receberá as mensagens com os dados e irá salvar-los na tabela events do banco de dados. A tabela events possui triggers em que ao inserir novos dados, elas atualizarão a tabela correspondente aos dados. O uso da tabela events para manipular os dados do campo foi pensado para unificar as atualizações do banco de modo a prevenir falhas de concorrência, bem como manter registrado os eventos do banco facilitando o tracking de possíveis bugs do sistema.
 
+O diagrama abaixo mostra a arquitetura do projeto explicada:
+![desafio dev](./desafio-dev.jpg)
+
 ## Iniciando o projeto
 
 ### Dependências necessárias
