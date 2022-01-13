@@ -2,7 +2,7 @@
 
 ## Fluxo de processamento
 
-O projeto foi construido utilizando arquitetura de microserviços e event sourcing. Ele está dividido em 4 microserviços: O ```frontend```, que exibe as informações e envia os arquivos; A ```API```, que fornece ao frontend os dados salvos no banco e recebe o arquivo a ser processado; O ```worker``` que processa o arquivo recebido pela API; O ```events```, que é responsável por salvar os dados processados no banco de dados. Os serviços se comunicam por meio de API Rest e filas de messageria (Rabbitmq). O banco de dados utilizado para persistir as infomações foi o PostgreSQL.
+O projeto foi construído utilizando arquitetura de microserviços e event sourcing. Ele está dividido em 4 microserviços: O ```frontend```, que exibe as informações e envia os arquivos; A ```API```, que fornece ao frontend os dados salvos no banco e recebe o arquivo a ser processado; O ```worker``` que processa o arquivo recebido pela API; O ```events```, que é responsável por salvar os dados processados no banco de dados. Os serviços se comunicam por meio de API Rest e filas de messageria (Rabbitmq). O banco de dados utilizado para persistir as infomações foi o PostgreSQL.
 
 Basicamente o ```frontend``` irá ler o arquivo do usuário e enviará para a ```API``` que receberá e vai persistir o arquivo no disco utilizando um volume compartilhado. Após isso, será enviado uma mensagem para fila de mensagens do worker (A fila foi criada usando o Rabbitmq) com o caminho do arquivo salvo no volume compartilhado.
 
@@ -31,10 +31,10 @@ Depois de instaladas as dependências e as tabelas sido criadas é possível ini
 make run
 ```
 
-Após isso, basta aguardar até que todos os serviços sejam iniciado e acessar a seguinte url: [http://localhost:8081](http://localhost:8081).
+Após isso, basta aguardar até que todos os serviços sejam iniciados e acessar a seguinte url: [http://localhost:8081](http://localhost:8081).
 
 ## Executando testes unitários
-Para executar os testes unitários é necessário ter as dependências instaladas e o bando de dados construido (já explicado em etapas anteriores). Após isso, basta executar o comando:
+Para executar os testes unitários é necessário ter as dependências instaladas e o bando de dados construído (já explicado em etapas anteriores). Após isso, basta executar o comando:
 
 ```shell
 make test
