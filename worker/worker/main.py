@@ -4,14 +4,7 @@ from rabbit_queue.producer import Producer
 from rabbit_queue.exception import BrokerConnectionError
 from worker.consumer import Consumer
 from worker.logger import logger
-from worker.settings import (
-    BROKER_HOST,
-    BROKER_PORT,
-    BROKER_USER,
-    BROKER_PASS,
-    QUEUE,
-    ROUTING_KEY
-)
+from worker.settings import BROKER_HOST, BROKER_PORT, BROKER_USER, BROKER_PASS, QUEUE, ROUTING_KEY
 
 
 def handle_sigterm(*args):
@@ -31,8 +24,7 @@ def handle_sigterm(*args):
 
 
 def main():
-    """Function to start the project.
-    """
+    """Function to start the project."""
     producer = Producer(
         broker_host=BROKER_HOST,
         broker_port=BROKER_PORT,
@@ -48,7 +40,7 @@ def main():
             broker_pass=BROKER_PASS,
             queue=QUEUE,
             rounting_key=ROUTING_KEY,
-            callback=Consumer(producer).callback
+            callback=Consumer(producer).callback,
         )
 
         signal.signal(signal.SIGTERM, handle_sigterm)

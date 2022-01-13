@@ -2,6 +2,7 @@ from worker.enumerators import TransactionType
 from worker.logger import logger
 from worker.settings import PROCESS_AREA
 
+
 class Consumer:
     def __init__(self, producer):
         self._producer = producer
@@ -14,7 +15,7 @@ class Consumer:
             "6": TransactionType.VENDAS,
             "7": TransactionType.RECEBIMENTO_TED,
             "8": TransactionType.RECEBIMENTO_DOC,
-            "9": TransactionType.ALUGUEL
+            "9": TransactionType.ALUGUEL,
         }
 
         self._map_field_to_slice = {
@@ -25,7 +26,7 @@ class Consumer:
             "card": (30, 42),
             "hour": (42, 48),
             "store_owner": (48, 62),
-            "store_name": (62, 81)
+            "store_name": (62, 81),
         }
 
     def parse_line(self, line):
@@ -69,7 +70,6 @@ class Consumer:
 
         return lines
 
-
     def parse_lines(self, lines):
         """Method to parse the lines of the file.
 
@@ -101,13 +101,7 @@ class Consumer:
             Event data.
         """
         self._producer.open_connection()
-        self._producer.publish(
-            routing_key="events",
-            message={
-                "name": name,
-                "data": data
-            }
-        )
+        self._producer.publish(routing_key="events", message={"name": name, "data": data})
         self._producer.close()
 
     def mount_cnab_object(self, data):
@@ -130,7 +124,7 @@ class Consumer:
             "cpf": data["cpf"],
             "card": data["card"],
             "store_owner": data["store_owner"],
-            "store_name": data["store_name"]
+            "store_name": data["store_name"],
         }
 
     def mount_store_object(self, cnab_data):
@@ -149,8 +143,8 @@ class Consumer:
         return {
             "name": cnab_data["store_name"],
             "owner": cnab_data["store_owner"],
-            "balance": self._map_type[cnab_data["type"]](int(cnab_data["value"]))
-        }  
+            "balance": self._map_type[cnab_data["type"]](int(cnab_data["value"])),
+        }
 
     def process_lines(self, lines):
         """
@@ -190,10 +184,4 @@ class Consumer:
         self.process_lines(parsed_lines)
 
         logger.info("Sending to events")
-        self.send_to_events(
-            name="SaveFile",
-            data={
-                "id": file_id,
-                "status": status_finished
-            }
-        )
+        self.send_to_events(name="SaveFile", data={"id": file_id, "status": status_finished})
