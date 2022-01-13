@@ -1,5 +1,14 @@
 version: "3"
 services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_API_URL=/api
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
   api:
     build: ./api
     depends_on:
@@ -13,8 +22,8 @@ services:
       - BROKER_USER=guest
       - BROKER_PASS=guest
       - BROKER_PORT=5672
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     volumes:
       - process_area:/opt/process_area
   
@@ -53,8 +62,8 @@ services:
     
   db:
     image: postgres:11-alpine
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -62,9 +71,9 @@ services:
 
   broker:
     image: rabbitmq:3-management-alpine
-    ports:
-      - "5672:5672"
-      - "8080:15672"
+    # ports:
+    #   - "5672:5672"
+    #   - "8080:15672"
     volumes:
       - data:/var/lib/rabbitmq
 
