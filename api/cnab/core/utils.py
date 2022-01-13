@@ -1,10 +1,5 @@
 from rabbit_queue.producer import Producer
-from cnab.settings import (
-    BROKER_HOST,
-    BROKER_PORT,
-    BROKER_USER,
-    BROKER_PASS
-)
+from cnab.settings import BROKER_HOST, BROKER_PORT, BROKER_USER, BROKER_PASS
 
 
 def send_to_worker(data):
@@ -23,8 +18,5 @@ def send_to_worker(data):
     )
 
     producer.open_connection()
-    producer.publish(
-        routing_key="file_parser",
-        message=data
-    )
+    producer.publish(routing_key="file_parser", message=data)
     producer.close()

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TransactionType(Enum):
     DEBITO = 1
     BOLETO = 2

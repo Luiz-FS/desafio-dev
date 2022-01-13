@@ -4,13 +4,16 @@ from core.enumerators import TransactionType, FileStatus
 
 
 type_choices = list(map(lambda type: (type.value, type.name), TransactionType.__members__.values()))
-status_choices = list(map(lambda status: (status.value, status.name), FileStatus.__members__.values()))
+status_choices = list(
+    map(lambda status: (status.value, status.name), FileStatus.__members__.values())
+)
 
 
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         abstract = True
 
@@ -33,4 +36,6 @@ class Store(BaseModel):
 
 class File(BaseModel):
     filepath = models.TextField(null=False)
-    status = models.IntegerField(choices=status_choices, null=False, default=FileStatus.PENDING.value)
+    status = models.IntegerField(
+        choices=status_choices, null=False, default=FileStatus.PENDING.value
+    )

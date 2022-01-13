@@ -4,6 +4,7 @@ from core import models
 
 class CNABDocumentationSerializer(serializers.ModelSerializer):
     display_type = serializers.CharField(source="get_type_display", read_only=True)
+
     class Meta:
         model = models.CNABDocumentation
         fields = "__all__"
