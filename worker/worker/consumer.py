@@ -29,6 +29,18 @@ class Consumer:
         }
 
     def parse_line(self, line):
+        """Method to parse the operation line received by parameter.
+
+        Parameters
+        ----------
+        line : str
+            Line to be parse.
+
+        Returns
+        -------
+        dict
+            Object with parsed fields.
+        """
         result = {}
 
         for (field, slice) in self._map_field_to_slice.items():
@@ -38,6 +50,18 @@ class Consumer:
         return result
 
     def read_file(self, filepath):
+        """Method to read the file.
+
+        Parameters
+        ----------
+        filepath : str
+            File path.
+
+        Returns
+        -------
+        List[str]
+            List with the lines of the file.
+        """
         lines = []
 
         with open(f"{PROCESS_AREA}/{filepath}") as f:
@@ -47,6 +71,18 @@ class Consumer:
 
 
     def parse_lines(self, lines):
+        """Method to parse the lines of the file.
+
+        Parameters
+        ----------
+        lines : List[str]
+            File lines to be parse.
+
+        Returns
+        -------
+        List[dict]
+            List of parsed lines.
+        """
         parsed_lines = []
 
         for line in lines:
@@ -55,6 +91,15 @@ class Consumer:
         return parsed_lines
 
     def send_to_events(self, name, data):
+        """Method to send message to the envents queue.
+
+        Parameters
+        ----------
+        name : str
+            Event name
+        data : dict
+            Event data.
+        """
         self._producer.open_connection()
         self._producer.publish(
             routing_key="events",
@@ -66,6 +111,18 @@ class Consumer:
         self._producer.close()
 
     def mount_cnab_object(self, data):
+        """Method to mount the cnab object.
+
+        Parameters
+        ----------
+        data : dict
+            Raw cnab data
+
+        Returns
+        -------
+        dict
+            Mounted cnab object.
+        """
         return {
             "type": data["type"],
             "date": f"{data['date']}{data['hour']}",
@@ -77,6 +134,18 @@ class Consumer:
         }
 
     def mount_store_object(self, cnab_data):
+        """Method to mount the store object.
+
+        Parameters
+        ----------
+        cnab_data : dict
+            cnab object
+
+        Returns
+        -------
+        dict
+            Mounted store object
+        """
         return {
             "name": cnab_data["store_name"],
             "owner": cnab_data["store_owner"],
@@ -84,6 +153,14 @@ class Consumer:
         }  
 
     def process_lines(self, lines):
+        """
+        Method to process parsed rows and send them to the event queue.
+
+        Parameters
+        ----------
+        lines : List[dict]
+            List of parsed lines.
+        """
         for line in lines:
             cnab_object = self.mount_cnab_object(line)
             store_object = self.mount_store_object(cnab_object)
@@ -92,6 +169,13 @@ class Consumer:
             self.send_to_events(name="SaveStore", data=store_object)
 
     def callback(self, body):
+        """Method for processing the messages received by the queue.
+
+        Parameters
+        ----------
+        body : dict
+            Message data.
+        """
         status_finished = 2
         file_id = body["file_id"]
         filepath = body["filepath"]

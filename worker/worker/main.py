@@ -31,6 +31,8 @@ def handle_sigterm(*args):
 
 
 def main():
+    """Function to start the project.
+    """
     producer = Producer(
         broker_host=BROKER_HOST,
         broker_port=BROKER_PORT,
