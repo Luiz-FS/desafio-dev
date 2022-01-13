@@ -22,8 +22,7 @@ class PostgresqlEventsRepository:
         cursor.execute(sql, (name, json.dumps(data)))
         self._db_conn.commit()
         cursor.close()
-    
+
     def close_connection(self):
-        """Méthod to close database connection.
-        """
+        """Méthod to close database connection."""
         self._db_conn.close()

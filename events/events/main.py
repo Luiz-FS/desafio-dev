@@ -11,7 +11,7 @@ from events.settings import (
     BROKER_PASS,
     QUEUE,
     ROUTING_KEY,
-    DB_URI
+    DB_URI,
 )
 
 
@@ -32,8 +32,7 @@ def handle_sigterm(*args):
 
 
 def main():
-    """Function to start the project.
-    """
+    """Function to start the project."""
     repository = PostgresqlEventsRepository(DB_URI)
 
     try:
@@ -44,7 +43,7 @@ def main():
             broker_pass=BROKER_PASS,
             queue=QUEUE,
             rounting_key=ROUTING_KEY,
-            callback=Consumer(repository).callback
+            callback=Consumer(repository).callback,
         )
 
         signal.signal(signal.SIGTERM, handle_sigterm)
