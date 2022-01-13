@@ -1,85 +1,86 @@
-# Desafio programação - para vaga desenvolvedor
+# Desafio DEV
 
-Por favor leiam este documento do começo ao fim, com muita atenção.
-O intuito deste teste é avaliar seus conhecimentos técnicos em programação.
-O teste consiste em parsear [este arquivo de texto(CNAB)](https://github.com/ByCodersTec/desafio-ruby-on-rails/blob/master/CNAB.txt) e salvar suas informações(transações financeiras) em uma base de dados a critério do candidato.
-Este desafio deve ser feito por você em sua casa. Gaste o tempo que você quiser, porém normalmente você não deve precisar de mais do que algumas horas.
+## Fluxo de processamento
 
-# Instruções de entrega do desafio
+O projeto foi construido utilizando arquitetura de microserviços e event sourcing. Ele está dividido em 4 microserviços: O ```frontend```, que exibe as informações e envia os arquivos; A ```API```, que fornece ao frontend os dados salvos no banco e recebe o arquivo a ser processado; O ```worker``` que processa o arquivo recebido pela API; O ```events```, que é responsável por salvar os dados processados no banco de dados. Os serviços se comunicam por meio de API Rest e filas de messageria (Rabbitmq). O banco de dados utilizado para persistir as infomações foi o PostgreSQL.
 
-1. Primeiro, faça um fork deste projeto para sua conta no Github (crie uma se você não possuir).
-2. Em seguida, implemente o projeto tal qual descrito abaixo, em seu clone local.
-3. Por fim, envie via email o projeto ou o fork/link do projeto para seu contato Bycoders_ com cópia para rh@bycoders.com.br.
+Basicamente o ```frontend``` irá ler o arquivo do usuário e enviará para a ```API``` que receberá e vai persistir o arquivo no disco utilizando um volume compartilhado. Após isso, será enviado uma mensagem para fila de mensagens do worker (A fila foi criada usando o Rabbitmq) com o caminho do arquivo salvo no volume compartilhado.
 
-# Descrição do projeto
+O ```worker``` receberá a mensagem e iniciará o processamento do arquivo. Primeiramente, o arquivo é lido do volume compartilhado, depois suas linhas são separadas para serem parseadas individualmente. Depois da etapa de leitura, cada linha é parseada de acordo com as posições dos campos informados nos [requisitos do projeto](./README_BASE.md). Por fim, o ```worker``` enviará mensagens para a fila do ```envets``` com os dados parseados.
 
-Você recebeu um arquivo CNAB com os dados das movimentações finanaceira de várias lojas.
-Precisamos criar uma maneira para que estes dados sejam importados para um banco de dados.
+O ```events``` receberá as mensagens com os dados e irá salvar-los na tabela events do banco de dados. A tabela events possui triggers em que ao inserir novos dados, elas atualizarão a tabela correspondente aos dados. O uso da tabela events para manipular os dados do campo foi pensado para unificar as atualizações do banco de modo a prevenir falhas de concorrência, bem como manter registrado os eventos do banco facilitando o tracking de possíveis bugs do sistema.
 
-Sua tarefa é criar uma interface web que aceite upload do [arquivo CNAB](https://github.com/ByCodersTec/desafio-ruby-on-rails/blob/master/CNAB.txt), normalize os dados e armazene-os em um banco de dados relacional e exiba essas informações em tela.
+## Iniciando o projeto
 
-**Sua aplicação web DEVE:**
+### Dependências necessárias
+Antes de executar o projeto é preciso certificar-se de ter algumas depências, elas são: ```Python3``` (e o pip caso não esteja instalado), o ```Docker``` e o ```Docker Compose```.
 
-1. Ter uma tela (via um formulário) para fazer o upload do arquivo(pontos extras se não usar um popular CSS Framework )
-2. Interpretar ("parsear") o arquivo recebido, normalizar os dados, e salvar corretamente a informação em um banco de dados relacional, **se atente as documentações** que estão logo abaixo.
-3. Exibir uma lista das operações importadas por lojas, e nesta lista deve conter um totalizador do saldo em conta
-4. Ser escrita na sua linguagem de programação de preferência
-5. Ser simples de configurar e rodar, funcionando em ambiente compatível com Unix (Linux ou Mac OS X). Ela deve utilizar apenas linguagens e bibliotecas livres ou gratuitas.
-6. Git com commits atomicos e bem descritos
-7. PostgreSQL, MySQL ou SQL Server
-8. Ter testes automatizados
-9. Docker compose (Pontos extras se utilizar)
-10. Readme file descrevendo bem o projeto e seu setup
-11. Incluir informação descrevendo como consumir o endpoint da API
+### Criando tabelas no banco
+Após certificar-se de ter todas dependências instaladas, é preciso popular o banco de dados com as tabelas que serão utilizadas. Para isso, basta executar na raíz do projeto o comando:
 
-**Sua aplicação web não precisa:**
+```shell
+make migrate
+```
 
-1. Lidar com autenticação ou autorização (pontos extras se ela fizer, mais pontos extras se a autenticação for feita via OAuth).
-2. Ser escrita usando algum framework específico (mas não há nada errado em usá-los também, use o que achar melhor).
-3. Documentação da api.(Será um diferencial e pontos extras se fizer)
+OBS: Só é necessário executar esse comando na primeira vez que em for executar o projeto.
 
-# Documentação do CNAB
+### Executando o projeto
+Depois de instaladas as dependências e as tabelas sido criadas é possível iniciar o projeto. Para isso execute o seguinte comando:
 
-| Descrição do campo  | Inicio | Fim | Tamanho | Comentário
-| ------------- | ------------- | -----| ---- | ------
-| Tipo  | 1  | 1 | 1 | Tipo da transação
-| Data  | 2  | 9 | 8 | Data da ocorrência
-| Valor | 10 | 19 | 10 | Valor da movimentação. *Obs.* O valor encontrado no arquivo precisa ser divido por cem(valor / 100.00) para normalizá-lo.
-| CPF | 20 | 30 | 11 | CPF do beneficiário
-| Cartão | 31 | 42 | 12 | Cartão utilizado na transação 
-| Hora  | 43 | 48 | 6 | Hora da ocorrência atendendo ao fuso de UTC-3
-| Dono da loja | 49 | 62 | 14 | Nome do representante da loja
-| Nome loja | 63 | 81 | 19 | Nome da loja
+```shell
+make run
+```
 
-# Documentação sobre os tipos das transações
+Após isso, basta aguardar até que todos os serviços sejam iniciado e acessar a seguinte url: [http://localhost:8081](http://localhost:8081).
 
-| Tipo | Descrição | Natureza | Sinal |
-| ---- | -------- | --------- | ----- |
-| 1 | Débito | Entrada | + |
-| 2 | Boleto | Saída | - |
-| 3 | Financiamento | Saída | - |
-| 4 | Crédito | Entrada | + |
-| 5 | Recebimento Empréstimo | Entrada | + |
-| 6 | Vendas | Entrada | + |
-| 7 | Recebimento TED | Entrada | + |
-| 8 | Recebimento DOC | Entrada | + |
-| 9 | Aluguel | Saída | - |
+## Executando testes unitários
+Para executar os testes unitários é necessário ter as dependências instaladas e o bando de dados construido (já explicado em etapas anteriores). Após isso, basta executar o comando:
 
-# Avaliação
+```shell
+make test
+```
 
-Seu projeto será avaliado de acordo com os seguintes critérios.
+## Acessando documentação da API
+Para acessar a documetação da api, é preciso executar o projeto e acessar a seguinte url: [http://localhost:8081/api/docs/schema/swagger-ui/](http://localhost:8081/api/docs/schema/swagger-ui/)
 
-1. Sua aplicação preenche os requerimentos básicos?
-2. Você documentou a maneira de configurar o ambiente e rodar sua aplicação?
-3. Você seguiu as instruções de envio do desafio?
-4. Qualidade e cobertura dos testes unitários.
+## Exemplo de consumo da api
 
-Adicionalmente, tentaremos verificar a sua familiarização com as bibliotecas padrões (standard libs), bem como sua experiência com programação orientada a objetos a partir da estrutura de seu projeto.
+### Enviando arquivo
+```python
+import requests
 
-# Referência
+with open("cnab.txt") as f:
+    resp = requests.post(
+        "http://localhost:8081/api/file/",
+        files={
+            "file": f
+        }
+    )
+```
 
-Este desafio foi baseado neste outro desafio: https://github.com/lschallenges/data-engineering
+### Carregando operações por nome de loja
 
----
+```python
+import requests
 
-Boa sorte!
+resp = requests.get(
+    "http://localhost:8081/api/cnab-documentation/?store_name=store_name"
+)
+```
+
+### Carregando dados das lojas
+```python
+import requests
+
+resp = requests.get(
+    "http://localhost:8081/api/store/"
+)
+```
+
+## Lista de comandos
+
+```make migrate```: Inicia o bando de dados PostgreSQL e cria as tabelas necessárias.
+
+```make run```: Inicia todos os serviços do projeto.
+
+```make test```: Executa os testes unitários.
