@@ -40,21 +40,14 @@ class Consumer:
             raise BrokerConnectionError()
 
         self._channel = connection.channel()
-        self._channel.exchange_declare(
-            exchange=exchange,
-            exchange_type=exchange_type
-        )
+        self._channel.exchange_declare(exchange=exchange, exchange_type=exchange_type)
         self._channel.queue_declare(queue=queue, durable=True)
-        self._channel.queue_bind(
-            queue=queue,
-            exchange=exchange,
-            routing_key=self._routing_key
-        )
+        self._channel.queue_bind(queue=queue, exchange=exchange, routing_key=self._routing_key)
         self._channel.basic_qos(prefetch_count=1)
         self._channel.basic_consume(
             queue=self._queue,
             on_message_callback=partial(self._callback, cb=callback),
-            auto_ack=False
+            auto_ack=False,
         )
 
     def _callback(self, channel, method, properties, body, cb):
@@ -78,7 +71,5 @@ class Consumer:
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
-        """Method to start queue consumption.
-        """
+        """Method to start queue consumption."""
         self._channel.start_consuming()
-

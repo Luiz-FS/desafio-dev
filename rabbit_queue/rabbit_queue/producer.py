@@ -9,7 +9,6 @@ BROKER_PASS = config("BROKER_PASS", default="guest", cast=str)
 BROKER_PORT = config("BROKER_PORT", default=5672, cast=int)
 
 
-
 class Producer:
     def __init__(
         self,
@@ -30,16 +29,12 @@ class Producer:
             heartbeat=heartbeat,
         )
         self._properties = pika.BasicProperties(content_type="application/json", delivery_mode=2)
-    
+
     def open_connection(self):
-        """Method to open the connection to the queue.
-        """
+        """Method to open the connection to the queue."""
         self._connection = pika.BlockingConnection(self._parameters)
         self._channel = self._connection.channel()
-        self._channel.exchange_declare(
-            exchange=self._exchange,
-            exchange_type=self._exchange_type
-        )
+        self._channel.exchange_declare(exchange=self._exchange, exchange_type=self._exchange_type)
 
     def publish(self, routing_key, message):
         """Method for publishing messages to the queue.
@@ -55,9 +50,9 @@ class Producer:
             exchange=self._exchange,
             routing_key=routing_key,
             body=json.dumps(message),
-            properties=self._properties
+            properties=self._properties,
         )
-    
+
     def close(self):
         """Disconnect from RabbitMQ connection."""
         self._connection.close()
