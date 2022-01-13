@@ -58,10 +58,27 @@ class Consumer:
         )
 
     def _callback(self, channel, method, properties, body, cb):
+        """Method for processing messages received by the message queue.
+
+        Parameters
+        ----------
+        ch : pika.channel.Channel
+            The channel object.
+        method : pika.frame.Method
+            Informed method.
+        properties : pika.Spec.BasicProperties
+            Infomed properties.
+        body : str|unicode
+            The message body.
+        cb : function
+            Callback function
+        """
         body = json.loads(body)
         cb(body)
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
     def run(self):
+        """Method to start queue consumption.
+        """
         self._channel.start_consuming()
 

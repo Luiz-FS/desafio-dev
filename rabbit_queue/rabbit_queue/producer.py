@@ -32,6 +32,8 @@ class Producer:
         self._properties = pika.BasicProperties(content_type="application/json", delivery_mode=2)
     
     def open_connection(self):
+        """Method to open the connection to the queue.
+        """
         self._connection = pika.BlockingConnection(self._parameters)
         self._channel = self._connection.channel()
         self._channel.exchange_declare(
@@ -40,6 +42,15 @@ class Producer:
         )
 
     def publish(self, routing_key, message):
+        """Method for publishing messages to the queue.
+
+        Parameters
+        ----------
+        routing_key : str
+            Queue route key.
+        message : dict
+            Object data to be sent.
+        """
         self._channel.basic_publish(
             exchange=self._exchange,
             routing_key=routing_key,
