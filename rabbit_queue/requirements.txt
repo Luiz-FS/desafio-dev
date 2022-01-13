@@ -1,2 +1,2 @@
-python-decouple
-pika
+python-decouple==3.5
+pika==1.2.0
