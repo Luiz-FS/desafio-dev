@@ -8,6 +8,13 @@ from cnab.settings import (
 
 
 def send_to_worker(data):
+    """Method to send message to worker queue.
+
+    Parameters
+    ----------
+    data : dict
+        Object data to be sent.
+    """
     producer = Producer(
         broker_host=BROKER_HOST,
         broker_port=BROKER_PORT,

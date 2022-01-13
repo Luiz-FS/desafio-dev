@@ -12,6 +12,20 @@ class FileAPIView(generics.ListCreateAPIView):
     filterset_fields = '__all__'
 
     def create(self, request, *args, **kwargs):
+        """
+        Method to read the file received by the request, save
+        to the shared volume and send message to the worker queue.
+
+        Parameters
+        ----------
+        request : rest_framework.request.Request
+            Request object
+
+        Returns
+        -------
+        rest_framework.response.Response
+            api response object
+        """
         file = request.stream.FILES.get("file")
 
         if not file:
