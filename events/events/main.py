@@ -32,6 +32,8 @@ def handle_sigterm(*args):
 
 
 def main():
+    """Function to start the project.
+    """
     repository = PostgresqlEventsRepository(DB_URI)
 
     try:
