@@ -82,7 +82,7 @@ resp = requests.get(
 
 ## Lista de comandos
 
-```make migrate```: Inicia o bando de dados PostgreSQL e cria as tabelas necessárias.
+```make migrate```: Inicia o banco de dados PostgreSQL e cria as tabelas necessárias.
 
 ```make run```: Inicia todos os serviços do projeto.
 
