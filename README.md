@@ -71,7 +71,7 @@ resp = requests.get(
 )
 ```
 
-### Carregando dados das lojas
+### Carregando dados das lojas.
 ```python
 import requests
 
