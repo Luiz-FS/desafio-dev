@@ -86,4 +86,4 @@ resp = requests.get(
 
 ```make run```: Inicia todos os serviços do projeto.
 
-```make test```: Executa os testes unitários.
+```make test```: Executa os testes unitários
